@@ -16,7 +16,32 @@ connection.connect(function (err) {
 });
 connection.query("USE korean_webapp");
 
-const currentDate = new Date().toISOString().split("T")[0];
+const currentDate = new Date();
+
+function calculateDueDate(priority) {
+  var date = new Date();
+  switch (priority) {
+    case -1:
+      return date.toISOString().split("T")[0];
+    case 0:
+      return date.toISOString().split("T")[0];
+    case 1:
+      date.setDate(date.getDate() + 3);
+      return date.toISOString().split("T")[0];
+    case 2:
+      date.setDate(date.getDate() + 7);
+      return date.toISOString().split("T")[0];
+    case 3:
+      date.setDate(date.getDate() + 14);
+      return date.toISOString().split("T")[0];
+    case 4:
+      date.setDate(date.getDate() + 30);
+      return date.toISOString().split("T")[0];
+    case 5:
+      date.setDate(date.getDate() + 365);
+      return date.toISOString().split("T")[0];
+  }
+}
 router.get("/get-new", (req, res) => {
   var last_item_id;
   if (!req.user) res.send("user not logged in");
@@ -99,9 +124,10 @@ router.post("/succeed-card", (req, res) => {
         "",
       function (err, rows) {
         if (rows.length) {
-          var priority = rows[0].priority + 1;
-          //TODO set due date due to priority
-          var dueDate = currentDate;
+          var priority;
+          if (rows[0].priority === 5) priority = 5;
+          else priority = rows[0].priority + 1;
+          var dueDate = calculateDueDate(priority);
           connection.query(
             "UPDATE flashcards SET priority = " +
               priority +
@@ -130,9 +156,11 @@ router.post("/fail-card", (req, res) => {
         "",
       function (err, rows) {
         if (rows.length) {
-          var priority = rows[0].priority - 1;
-          //TODO set due date due to priority
-          var dueDate = currentDate;
+          var priority;
+          if (rows[0].priority !== -1 && rows[0].priority !== 0)
+            priority = rows[0].priority - 1;
+          else priority = rows[0].priority;
+          var dueDate = calculateDueDate(priority);
           connection.query(
             "UPDATE flashcards SET priority = " +
               priority +
