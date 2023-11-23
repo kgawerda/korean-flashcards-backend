@@ -16,7 +16,7 @@ connection.connect(function (err) {
 });
 connection.query("USE korean_webapp");
 
-const currentDate = new Date();
+const currentDate = new Date().toISOString().split("T")[0];
 
 function calculateDueDate(priority) {
   var date = new Date();
@@ -53,7 +53,6 @@ router.get("/get-new", (req, res) => {
       function (err, rows) {
         if (!rows.length) last_item_id = 0;
         else last_item_id = rows[0].vocabulary_item_ref_id;
-        console.log(last_item_id);
         connection.query(
           "SELECT * from vocabulary ORDER BY item_id ASC LIMIT " +
             last_item_id +
@@ -87,10 +86,11 @@ router.get("/get-due", (req, res) => {
     connection.query(
       "SELECT * from flashcards WHERE user_ref_id = " +
         req.user.user_id +
-        " AND due_date = '" +
+        " AND due_date <= '" +
         currentDate +
         "'",
       function (err, rows) {
+        if (err) console.log(err);
         if (rows.length) res.json(rows);
         else res.send("no items due today");
       }
