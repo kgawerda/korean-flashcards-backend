@@ -11,7 +11,7 @@ var connection = mysql.createConnection({
   host: "172.22.144.1",
   port: "3306",
   user: "root",
-  password: "nostale12",
+  password: "",
 });
 connection.connect(function (err) {
   if (err) throw err;
