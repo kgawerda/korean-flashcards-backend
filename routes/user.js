@@ -33,7 +33,7 @@ router.post("/sign-up", async (req, res, next) => {
     return next(err);
   }
 });
-
+//strategy adapted from https://gist.github.com/manjeshpv/84446e6aa5b3689e8b84
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     connection.query(

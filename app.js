@@ -6,6 +6,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
 var userRouter = require("./routes/user");
+var flashcardsRouter = require("./routes/flashcards");
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/user", userRouter);
+app.use("/flashcards", flashcardsRouter);
 
 app.listen(3000, () => console.log("app listening on port 3000!"));
