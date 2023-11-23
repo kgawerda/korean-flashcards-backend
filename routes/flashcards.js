@@ -51,6 +51,7 @@ router.get("/get-new", (req, res) => {
         req.user.user_id +
         " ORDER BY flashcard_id DESC LIMIT 1",
       function (err, rows) {
+        if (err) next(err);
         if (!rows.length) last_item_id = 0;
         else last_item_id = rows[0].vocabulary_item_ref_id;
         connection.query(
@@ -58,6 +59,7 @@ router.get("/get-new", (req, res) => {
             last_item_id +
             ", 10",
           function (err, rows) {
+            if (err) next(err);
             for (let i = 0; i < rows.length; i++) {
               connection.query(
                 "INSERT INTO flashcards (due_date, priority, vocabulary_item_ref_id, user_ref_id) VALUES ('" +
@@ -68,7 +70,8 @@ router.get("/get-new", (req, res) => {
                   req.user.user_id +
                   ")",
                 function (err, rows) {
-                  if (err) console.log(err);
+                  if (err) next(err);
+                  else res.send("items added");
                 }
               );
             }
@@ -76,7 +79,6 @@ router.get("/get-new", (req, res) => {
         );
       }
     );
-    res.send("items added");
   }
 });
 
@@ -90,8 +92,8 @@ router.get("/get-due", (req, res) => {
         currentDate +
         "'",
       function (err, rows) {
-        if (err) console.log(err);
-        if (rows.length) res.json(rows);
+        if (err) next(err);
+        else if (rows.length) res.json(rows);
         else res.send("no items due today");
       }
     );
@@ -106,7 +108,8 @@ router.get("/get-learning", (req, res) => {
         req.user.user_id +
         " AND priority = -1",
       function (err, rows) {
-        if (rows.length) res.json(rows);
+        if (err) next(err);
+        else if (rows.length) res.json(rows);
         else res.send("no items in learning");
       }
     );
@@ -123,6 +126,7 @@ router.post("/succeed-card", (req, res) => {
         req.body.flashcard_id +
         "",
       function (err, rows) {
+        if (err) next(err);
         if (rows.length) {
           var priority;
           if (rows[0].priority === 5) priority = 5;
@@ -136,13 +140,15 @@ router.post("/succeed-card", (req, res) => {
               "' WHERE flashcard_id = " +
               req.body.flashcard_id +
               "",
-            function (err, res) {}
+            function (err, res) {
+              if (err) next(err);
+              else res.send("card succeeded");
+            }
           );
-        } else res.send("no item with that flashcard_id");
+        }
       }
     );
   }
-  res.send("card succeeded");
 });
 
 router.post("/fail-card", (req, res) => {
@@ -155,6 +161,7 @@ router.post("/fail-card", (req, res) => {
         req.body.flashcard_id +
         "",
       function (err, rows) {
+        if (err) next(err);
         if (rows.length) {
           var priority;
           if (rows[0].priority !== -1 && rows[0].priority !== 0)
@@ -169,13 +176,15 @@ router.post("/fail-card", (req, res) => {
               "' WHERE flashcard_id = " +
               req.body.flashcard_id +
               "",
-            function (err, res) {}
+            function (err, res) {
+              if (err) next(err);
+              else res.send("card succeeded");
+            }
           );
-        } else res.send("no item with that flashcard_id");
+        }
       }
     );
   }
-  res.send("card succeeded");
 });
 
 module.exports = router;
