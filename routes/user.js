@@ -8,7 +8,8 @@ app = express();
 const mysql = require("mysql2");
 
 var connection = mysql.createConnection({
-  host: "172.22.144.1",
+  //to check ip cat /etc/resolv.conf
+  host: "172.17.112.1",
   port: "3306",
   user: "root",
   password: "",
@@ -76,7 +77,8 @@ router.post("/log-in", passport.authenticate("local"), (req, res) => {
 });
 
 router.get("/profile", (req, res) => {
-  res.json(req.user);
+  if (req.user) res.json(req.user);
+  else res.send(false);
 });
 
 module.exports = router;
