@@ -9,7 +9,7 @@ const mysql = require("mysql2");
 
 var connection = mysql.createConnection({
   //to check ip cat /etc/resolv.conf
-  host: "172.17.112.1",
+  host: "172.18.96.1",
   port: "3306",
   user: "root",
   password: "",

@@ -5,7 +5,7 @@ app = express();
 const mysql = require("mysql2");
 
 var connection = mysql.createConnection({
-  host: "172.17.112.1",
+  host: "172.18.96.1",
   port: "3306",
   user: "root",
   password: "",
@@ -71,15 +71,35 @@ router.get("/get-new", (req, res) => {
                   ")",
                 function (err, rows) {
                   if (err) next(err);
-                  else res.send("items added");
                 }
               );
             }
+            res.send("items added");
           }
         );
       }
     );
   }
+});
+
+router.get("/get-card/:id", (req, res) => {
+  connection.query(
+    "SELECT * from vocabulary WHERE item_id = " + req.params.id + "",
+    function (err, rows) {
+      if (err) console.log(err);
+      else res.json(rows);
+    }
+  );
+});
+
+router.get("/get-test-cards", (req, res) => {
+  connection.query(
+    "SELECT * from vocabulary ORDER BY item_id ASC LIMIT 10",
+    function (err, rows) {
+      if (err) next(err);
+      else res.json(rows);
+    }
+  );
 });
 
 router.get("/get-due", (req, res) => {

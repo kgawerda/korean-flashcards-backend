@@ -15,7 +15,7 @@ var corsOptions = {
   allowedHeaders: ["Set-Cookie", "Content-Type"],
   credentials: true,
   optionsSuccessStatus: 200,
-  exposedHeaders: "Set-Cookie",
+  exposedHeaders: ["Set-Cookie"],
 };
 app.use(cors(corsOptions));
 app.use(express.json());
